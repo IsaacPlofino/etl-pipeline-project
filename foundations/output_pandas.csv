@@ -1,0 +1,5 @@
+order_id,customer_name,quantity,price,status,revenue
+1001,Alice Reyes,5,1500.0,completed,7500.0
+1002,Bob Santos,3,12000.0,pending,36000.0
+1003,Clara Mendoza,8,150.0,completed,1200.0
+1004,Eva Torres,0,1500.0,cancelled,0.0
