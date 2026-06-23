@@ -1,51 +1,29 @@
 # ETL Pipeline Project — Isaac Plofino
 
-A modular Python ETL pipeline built as part of the IBM DataStage Sprint (June 2026). Demonstrates the Extract, Transform, Load architecture that underpins IBM DataStage pipelines — built from scratch after zero prior Python experience.
-
-**Stack:** Python 3.13 · pandas · csv · MySQL 8.4  
-**Sprint target:** IBM Consulting Associates — DataStage/Cloud track  
-**Companion repo:** [github.com/IsaacPlofino/sql-practice](https://github.com/IsaacPlofino/sql-practice)
-
----
-
-## Project Structure
-
-```
-etl-pipeline-project/
+A modular Python ETL pipeline built as part of the IBM DataStage Sprint. This project demonstrates the core Extract, Transform, Load (ETL) architecture that underpins enterprise data integration tools like IBM DataStage—built from scratch to showcase rapid upskilling and architectural adaptability.Stack: Python 3.13 · pandas · csv · MySQL 8.4Sprint Target: IBM Consulting Associates — DataStage/Cloud TrackCompanion Repo: github.com/IsaacPlofino/sql-practice📂 Project StructurePlaintextetl-pipeline-project/
 │
-├── extract.py           # Reads raw data from source CSV
-├── transform.py         # Applies business rules and enriches records
-├── load.py              # Writes clean data to output CSV
-├── pipeline.py          # Orchestrates the full ETL flow
+├── extract.py                # Reads raw data from source CSV
+├── transform.py              # Applies business rules and enriches records
+├── load.py                   # Writes clean data to target destination
+├── pipeline.py               # Orchestrates the full ETL workflow
 │
 ├── data/
-│   └── orders.csv       # Source data (sprint_db schema)
+│   └── orders.csv            # Source data (sprint_db schema)
 │
 ├── foundations/
-│   └── day_B4_etl_basics.py   # Python basics built before the pipeline
+│   └── day_B4_etl_basics.py  # Python and Pandas fundamentals core exercises
 │
 ├── notes/
-│   └── day_B3_etl_concepts_notes.md   # ETL theory and IBM DataStage notes
+│   └── day_B3_etl_concepts_notes.md  # ETL theory and IBM DataStage deep-dive notes
 │
 └── .gitignore
-```
-
----
-
-## How to Run
-
-```bash
-# Clone the repo
+🚀 How to RunBash# Clone the repository
 git clone https://github.com/IsaacPlofino/etl-pipeline-project.git
 cd etl-pipeline-project
 
-# Run the pipeline
+# Execute the pipeline orchestrator
 python pipeline.py
-```
-
-**Expected output:**
-```
-==================================================
+Expected Runtime Output:Plaintext==================================================
 IBM DataStage Sprint — ETL Pipeline
 ==================================================
 [EXTRACT]   4 records read from data/orders.csv
@@ -58,111 +36,10 @@ Pipeline complete.
   Invalid records: 1
   Total revenue  : 44,700.00
 ==================================================
-```
-
----
-
-## Pipeline Architecture
-
-Each file has exactly one responsibility — same separation of concerns as a DataStage job canvas.
-
-### extract.py — Source Stage
-Reads raw CSV data and returns it as a list of dictionaries. No transformation happens here. The filepath is passed as a parameter so the extractor can be pointed at any source without touching the code.
-
-```python
-def extract(filepath):
-    # Reads source CSV → returns raw records as list of dicts
-    # Every value comes in as a string — type conversion happens in transform
-```
-
-### transform.py — Transformer Stage
-Applies all business rules in one place. Three reusable functions plus the main `transform()` orchestrator:
-
-| Function | What it does | DataStage equivalent |
-|----------|-------------|---------------------|
-| `calculate_revenue()` | quantity × price | Transformer expression |
-| `categorize_revenue()` | Low / Mid / High / Zero | CASE WHEN logic |
-| `is_valid_order()` | quantity > 0, status ≠ cancelled | Filter stage condition |
-| `transform()` | Type conversion + applies all rules | Full Transformer stage |
-
-**Type conversion is explicit here** — CSV gives everything as strings. Converting before math is mandatory. A missing `int()` or `float()` is a pipeline crash at 2am during a client's batch run.
-
-### load.py — Target Stage
-Writes transformed records to output CSV. No business logic — just writing. If the target format changes, only this file needs touching.
-
-```python
-def load(records, filepath):
-    # Writes transformed records to output CSV
-    # fieldnames controls column order in the output
-```
-
-### pipeline.py — Job Orchestrator
-Calls extract → transform → load in sequence, then prints a summary. Uses `if __name__ == "__main__"` so the pipeline only runs when executed directly — not when imported by another file.
-
-```python
-raw_records         = extract("data/orders.csv")
-transformed_records = transform(raw_records)
-load(transformed_records, "output/orders_clean.csv")
-```
-
----
-
-## Data Schema
-
-Source data uses the `sprint_db` schema from the companion SQL repo:
-
-```
-orders.csv columns:
-  order_id       → int
-  customer_name  → str
-  quantity       → int   (converted from string on extract)
-  price          → float (converted from string on extract)
-  status         → str   (stripped and lowercased on transform)
-```
-
-**Output adds three enriched columns:**
-- `revenue` — quantity × price
-- `category` — Zero Revenue / Low / Mid / High
-- `is_valid` — True / False (quantity > 0 and status ≠ cancelled)
-
----
-
-## Foundations
-
-The `/foundations` folder contains `day_B4_etl_basics.py` — the Python learning file built the day before the pipeline. It covers:
-
-- Variables and data types
-- Lists and dictionaries
-- Loops and conditionals
-- Functions with return values
-- CSV read/write with `csv.DictReader` and `csv.DictWriter`
-- Pandas basics — DataFrame load, filtering, groupby, export
-
-This progression — theory → basics → modular pipeline — mirrors how IBM onboards DataStage Associates.
-
----
-
-## IBM DataStage Connection
-
-Every component of this pipeline maps directly to a DataStage stage:
-
-| This pipeline | DataStage equivalent |
-|--------------|---------------------|
-| `extract.py` | Sequential File stage (source) |
-| `transform.py` | Transformer stage |
-| `is_valid_order()` | Filter stage |
-| `calculate_revenue()` | Transformer expression |
-| `categorize_revenue()` | CASE WHEN in Transformer |
-| `load.py` | Sequential File stage (target) |
-| `pipeline.py` | DataStage job orchestrator |
-
-The tool changes depending on the client environment. The thinking doesn't.
-
----
-
-## Profile
-
-**Degree:** BSIT-Business Analytics, Cum Laude — Bulacan State University SJDM  
-**Awards:** Gold Gear Award (Dean's List all 4 years)  
-**Target:** IBM Consulting Associates — DataStage/Cloud track  
-**SQL repo:** [github.com/IsaacPlofino/sql-practice](https://github.com/IsaacPlofino/sql-practice)
+🏗️ Pipeline ArchitectureEach script is decoupled and handles exactly one responsibility—mirroring the strict separation of concerns found on an IBM DataStage job canvas.🔌 extract.py — Source StageExtracts raw data from flat files and parses them into memory.Design: Decoupled by accepting the filepath as an argument, allowing the pipeline to target different source environments without code modifications.Note: Values are treated as strings upon extraction; data sanitization and type casting are deferred to the transformation stage.⚙️ transform.py — Transformer StageActs as the central execution engine for business logic and data cleaning. It handles explicit type casting and features three specialized helper operations:FunctionOperational LogicDataStage Equivalentcalculate_revenue()quantity × priceTransformer Expressioncategorize_revenue()Buckets revenue (Low / Mid / High / Zero)CASE WHEN Conditional Logicis_valid_order()Filters out invalid quantities or cancelled ordersFilter Stage Conditiontransform()Orchestrated data cleaning & enrichmentFull Transformer Stage⚠️ Data Integrity Note: Because CSV values default to strings, explicit casting via int() and float() is enforced. Ensuring structural type safety here prevents downstream pipeline failures during automated production batches.📥 load.py — Target StagePersists transformed data into its final destination.Design: Contains no business logic. It handles layout mappings (fieldnames formatting) so that changing downstream environments (e.g., from CSV to a relational MySQL target) requires modifying only this module.🎮 pipeline.py — Job OrchestratorThe main driver that chains extract $\rightarrow$ transform $\rightarrow$ load in a functional pipeline.Uses a Python procedural guard (if __name__ == "__main__":) ensuring the script only runs when executed directly, preventing accidental pipeline execution when components are imported by other modules.📊 Data SchemaThe pipeline consumes the sprint_db schema from the companion SQL repository:PlaintextSource Schema (orders.csv):
+  ├── order_id       → int
+  ├── customer_name  → str
+  ├── quantity       → int   (Cast from string during transform)
+  ├── price          → float (Cast from string during transform)
+  └── status         → str   (Normalized to lowercase during transform)
+Enriched Output Fields:revenue: Calculated financial value ($quantity \times price$).category: Performance tier classifications (Zero Revenue / Low / Mid / High).is_valid: Boolean flag checking if data passes business health checks ($quantity > 0$ and $status \neq \text{'cancelled'}$).📈 FoundationsThe /foundations directory tracks my rapid progression from functional syntax to pipeline assembly via day_B4_etl_basics.py. Key concepts mastered include:Primitive types, nested lists, and key-value dictionaries.Control flow logic, iterable loops, and structured error handling.File I/O operations using native csv.DictReader and csv.DictWriter.Data manipulation with Pandas (DataFrames, conditional slicing, groupby aggregations, and performance writes).This structural learning path directly mirrors the production onboarding framework used for incoming enterprise Data Engineers.🤝 IBM DataStage Paradigm MappingThe logic driving this script is designed to translate natively into corporate DataStage job flows:Python ComponentDataStage Stage Equivalentextract.pySequential File Stage (Source)transform.pyTransformer Stageis_valid_order()Filter Stagecalculate_revenue()Transformer Inline Expressioncategorize_revenue()Derivation Constraints / CASE Logicload.pySequential File / DB Design Connector (Target)pipeline.pyDataStage Director / Sequence Job Orchestration👤 ProfileDegree: BSIT-Business Analytics, Cum Laude — Bulacan State University SJDMAwards: Gold Gear Award (Dean's List all 4 academic years)Target Role: IBM Consulting Associates — DataStage/Cloud TrackSQL Repository: github.com/IsaacPlofino/sql-practice
