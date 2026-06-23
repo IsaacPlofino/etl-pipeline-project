@@ -16,8 +16,12 @@ def run_pipeline():
     #Step 2 Transform
     transformed_records = transform(raw_records)
     
-    #Step 3 Load
-    load(transformed_records, "output/orders_clean.csv")
+    # Step 3: Load
+    load(
+        transformed_records,
+        "output/orders_clean.csv",
+        "output/orders_rejected.csv"
+    )
     
     #Summary
     total    = len(transformed_records)

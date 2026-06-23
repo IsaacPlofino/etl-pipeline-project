@@ -5,10 +5,14 @@ import csv
 def extract(filepath):
     raw_records = []
     
-    with open(filepath, "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            raw_records.append(row)
-            
+    try: 
+        with open(filepath, "r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                raw_records.append(row)
+    except FileNotFoundError: 
+        print(f"[EXTRACT ERROR] File not found: {filepath}")   
+        return []
+
     print(f"[EXTRACT] {len(raw_records)} records read from {filepath}")
     return raw_records
